@@ -2,8 +2,8 @@ TOOLCHAIN_TARGET="i686-pc-cygwin"
 inherit toolchain
 
 NAME="cygwin32-gcc"
-VERSION=4.8.2
-RELEASE=2
+VERSION=4.8.3
+RELEASE=1
 CATEGORY="Devel"
 SUMMARY="GCC for Cygwin 32bit toolchain"
 DESCRIPTION="The GNU Compiler Collection includes front ends for C, C++,
@@ -35,10 +35,10 @@ PATCH_URI="
 	gcc/4.8-lto-plugin-soname.patch
 	gcc/4.8-picflag-cygwin64.patch
 	gcc/4.8-specs-cygwin.patch
-	gcc/4.8-libgcc-references.patch
 	gcc/4.8-gcc-ada-DTR.patch
 	gcc/4.8-Wimplicit-decls.patch
 	gcc/4.8-ada-cygwin64.patch
+	gcc/4.9-default-manifest.patch
 	4.6-textdomain.patch
 "
 
