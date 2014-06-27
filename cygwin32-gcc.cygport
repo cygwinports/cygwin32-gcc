@@ -89,7 +89,7 @@ src_install() {
 KEEP_LA_FILES="none"
 
 PKG_NAMES="${NAME}-core ${NAME}-g++ ${NAME}-fortran ${NAME}-objc ${NAME}-objc++ ${NAME}-ada"
-cygwin32_gcc_core_REQUIRES="cygwin32-binutils cygwin32 cygwin32-w32api-runtime"
+cygwin32_gcc_core_REQUIRES="cygwin32-binutils cygwin32 cygwin32-default-manifest cygwin32-w32api-runtime"
 cygwin32_gcc_core_SUMMARY="${SUMMARY} (C, OpenMP)"
 cygwin32_gcc_core_CONTENTS="
 	--exclude=c++ --exclude=objc --exclude=gcj --exclude=jni*.h
