@@ -7,8 +7,8 @@ RELEASE=1
 CATEGORY="Devel"
 SUMMARY="GCC for Cygwin 32bit toolchain"
 DESCRIPTION="The GNU Compiler Collection includes front ends for C, C++,
-Objective-C, Fortran, Java, and Ada, as well as libraries for these languages
-(libstdc++, libgcj,...)."
+Objective-C, Fortran, and Ada, as well as libraries for these languages
+(libstdc++, libgfortran,...)."
 HOMEPAGE="http://gcc.gnu.org/"
 
 case ${VERSION} in
@@ -20,12 +20,6 @@ SRC_DIR="gcc-${VERSION}"
 
 PATCH_URI="
 	gcc/0001-share-mingw-fset-stack-executable-with-cygwin.patch
-	gcc/0002-boehm-gc-for-cygwin.patch
-	gcc/0003-AWT-Font-fix-for-Cygwin.patch
-	gcc/0004-Cygwin-ioctl-may-emit-EINVAL.patch
-	gcc/0005-use-avoid-version-if-not-tracking-SO-version.patch
-	gcc/0006-cygwin-uses-cyg-library-prefix.patch
-	gcc/0007-Avoid-installing-libffi.patch
 	gcc/0009-Cygwin-uses-sysv-ABI-on-x86_64.patch
 	gcc/0010-Do-not-version-lto-plugin-on-cygwin-mingw.patch
 	gcc/0011-add-dummy-pthread-tsaware-and-large-address-aware-fo.patch
@@ -56,7 +50,7 @@ CYGCONF_ARGS="
 	--with-dwarf2
 	--with-arch=i686 --with-tune=generic
 	--disable-sjlj-exceptions
-	--enable-languages=c,c++,fortran,ada,${NOTYET+java,}lto,objc,obj-c++
+	--enable-languages=c,c++,fortran,ada,lto,objc,obj-c++
 	--enable-graphite
 	--enable-linker-build-id
 	--enable-threads=posix
@@ -68,12 +62,8 @@ CYGCONF_ARGS="
 	--enable-libquadmath-support
 	--enable-libssp
 	--enable-libada
-	${NOTYET+--enable-libjava}
-	--enable-libgcj-sublibs
-	--disable-java-awt
 	--disable-symvers
 	--with-default-libstdcxx-abi=gcc4-compatible
-	--with-ecj-jar=/usr/share/java/ecj.jar
 	--with-gnu-ld --with-gnu-as
 	--with-system-zlib
 "
@@ -154,7 +144,6 @@ cygwin32_gcc_core_CONTENTS="
 cygwin32_gcc_g___REQUIRES="cygwin32-gcc-core"
 cygwin32_gcc_g___SUMMARY="${SUMMARY} (C++)"
 cygwin32_gcc_g___CONTENTS="
-	--exclude=gcj --exclude=gnu --exclude=java --exclude=javax --exclude=org
 	usr/bin/${TOOLCHAIN_TARGET}-c++.exe
 	usr/bin/${TOOLCHAIN_TARGET}-g++.exe
 	usr/lib/gcc/${TOOLCHAIN_TARGET}/${VERSION/-*/.*}/cc1plus.exe
