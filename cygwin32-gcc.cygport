@@ -2,7 +2,7 @@ TOOLCHAIN_TARGET="i686-pc-cygwin"
 inherit toolchain
 
 NAME="cygwin32-gcc"
-VERSION=5.4.0
+VERSION=6.4.0
 RELEASE=1
 CATEGORY="Devel"
 SUMMARY="GCC for Cygwin 32bit toolchain"
@@ -13,8 +13,8 @@ HOMEPAGE="http://gcc.gnu.org/"
 
 case ${VERSION} in
 *.*-20[1-9][0-9][0-1][0-9][0-3][0-9])
-	SRC_URI="mirror://gcc/snapshots/${VERSION}/gcc-${VERSION}.tar.bz2" ;;
-*)	SRC_URI="mirror://gnu/gcc/gcc-${VERSION}/gcc-${VERSION}.tar.bz2" ;;
+	SRC_URI="mirror://gcc/snapshots/${VERSION}/gcc-${VERSION}.tar.xz" ;;
+*)	SRC_URI="mirror://gnu/gcc/gcc-${VERSION}/gcc-${VERSION}.tar.xz" ;;
 esac
 SRC_DIR="gcc-${VERSION}"
 
@@ -34,7 +34,6 @@ PATCH_URI="
 	gcc/0020-cygwin-uses-cyg-lib-prefix.patch
 	gcc/0022-libgomp-soname-cygwin-mingw.patch
 	gcc/0024-libitm-weak-symbols.patch
-	gcc/0025-enable-libcilkrts.patch
 	gcc/0027-libtool-w32api.patch
 	gcc/0028-g++-time.patch
 	4.6-textdomain.patch
@@ -50,18 +49,17 @@ CYGCONF_ARGS="
 	--with-dwarf2
 	--with-arch=i686 --with-tune=generic
 	--disable-sjlj-exceptions
-	--enable-languages=c,c++,fortran,ada,lto,objc,obj-c++
+	--enable-languages=c,c++,fortran,lto
 	--enable-graphite
 	--enable-linker-build-id
+	--enable-clocale=gnu
 	--enable-threads=posix
 	--enable-libatomic
-	--enable-libcilkrts
 	--enable-libgomp
 	--enable-libitm
 	--enable-libquadmath
 	--enable-libquadmath-support
 	--enable-libssp
-	--enable-libada
 	--disable-symvers
 	--with-default-libstdcxx-abi=gcc4-compatible
 	--with-gnu-ld --with-gnu-as
@@ -99,10 +97,8 @@ src_install() {
 	rm -fr ${D}/usr/lib/gcc/${TOOLCHAIN_TARGET}/${VERSION}/include-fixed/
 }
 
-KEEP_LA_FILES="none"
-
-PKG_NAMES="${NAME}-core ${NAME}-g++ ${NAME}-fortran ${NAME}-objc ${NAME}-objc++"
-PKG_NAMES+=" ${NAME}-ada ${NAME}-cilkplus"
+PKG_NAMES="${NAME}-core ${NAME}-g++ ${NAME}-fortran"
+cygwin32_gcc_core_OBSOLETES="${NAME}-ada ${NAME}-cilkplus ${NAME}-objc"
 cygwin32_gcc_core_REQUIRES="cygwin32-binutils cygwin32 cygwin32-default-manifest cygwin32-w32api-runtime"
 cygwin32_gcc_core_SUMMARY="${SUMMARY} (C, OpenMP)"
 cygwin32_gcc_core_CONTENTS="
@@ -111,8 +107,7 @@ cygwin32_gcc_core_CONTENTS="
 	usr/bin/${TOOLCHAIN_TARGET}-cpp.exe
 	usr/bin/${TOOLCHAIN_TARGET}-gcc.exe
 	usr/bin/${TOOLCHAIN_TARGET}-gcc-*.exe
-	usr/bin/${TOOLCHAIN_TARGET}-gcov.exe
-	usr/bin/${TOOLCHAIN_TARGET}-gcov-tool.exe
+	usr/bin/${TOOLCHAIN_TARGET}-gcov*.exe
 	usr/lib/gcc/${TOOLCHAIN_TARGET}/${VERSION/-*/.*}/cc1.exe
 	usr/lib/gcc/${TOOLCHAIN_TARGET}/${VERSION/-*/.*}/collect2.exe
 	usr/lib/gcc/${TOOLCHAIN_TARGET}/${VERSION/-*/.*}/crt*.o
@@ -126,21 +121,19 @@ cygwin32_gcc_core_CONTENTS="
 	usr/lib/gcc/${TOOLCHAIN_TARGET}/${VERSION/-*/.*}/libitm.*
 	usr/lib/gcc/${TOOLCHAIN_TARGET}/${VERSION/-*/.*}/libquadmath.*
 	usr/lib/gcc/${TOOLCHAIN_TARGET}/${VERSION/-*/.*}/libssp*
-	usr/lib/gcc/${TOOLCHAIN_TARGET}/${VERSION/-*/.*}/libvtv*
 	usr/lib/gcc/${TOOLCHAIN_TARGET}/${VERSION/-*/.*}/lto*.exe
 	usr/share/doc/
 	usr/share/locale/
 	usr/share/man/man1/${TOOLCHAIN_TARGET}-cpp.1*
 	usr/share/man/man1/${TOOLCHAIN_TARGET}-gcc.1*
-	usr/share/man/man1/${TOOLCHAIN_TARGET}-gcov.1*
+	usr/share/man/man1/${TOOLCHAIN_TARGET}-gcov*.1*
 	${TOOLCHAIN_SYSROOT#/}/usr/bin/cygatomic-1.dll
 	${TOOLCHAIN_SYSROOT#/}/usr/bin/cyggcc_s-1.dll
 	${TOOLCHAIN_SYSROOT#/}/usr/bin/cyggomp*-1.dll
 	${TOOLCHAIN_SYSROOT#/}/usr/bin/cygquadmath-0.dll
 	${TOOLCHAIN_SYSROOT#/}/usr/bin/cygssp-0.dll
-	${TOOLCHAIN_SYSROOT#/}/usr/bin/cygvtv-0.dll
-	${TOOLCHAIN_SYSROOT#/}/usr/bin/cygvtv_stubs-0.dll
 "
+cygwin32_gcc_g___OBSOLETES="${NAME}-objc++"
 cygwin32_gcc_g___REQUIRES="cygwin32-gcc-core"
 cygwin32_gcc_g___SUMMARY="${SUMMARY} (C++)"
 cygwin32_gcc_g___CONTENTS="
@@ -163,32 +156,4 @@ cygwin32_gcc_fortran_CONTENTS="
 	usr/lib/gcc/${TOOLCHAIN_TARGET}/${VERSION/-*/.*}/libgfortran*
 	usr/share/man/man1/${TOOLCHAIN_TARGET}-gfortran.1*
 	${TOOLCHAIN_SYSROOT#/}/usr/bin/cyggfortran-3.dll
-"
-cygwin32_gcc_objc_SUMMARY="${SUMMARY} (Objective-C)"
-cygwin32_gcc_objc_REQUIRES="${NAME}-core"
-cygwin32_gcc_objc_CONTENTS="
-	usr/lib/gcc/${TOOLCHAIN_TARGET}/${VERSION/-*/.*}/include/objc/
-	usr/lib/gcc/${TOOLCHAIN_TARGET}/${VERSION/-*/.*}/cc1obj.exe
-	usr/lib/gcc/${TOOLCHAIN_TARGET}/${VERSION/-*/.*}/libobjc.*
-	${TOOLCHAIN_SYSROOT#/}/usr/bin/cygobjc-4.dll
-"
-cygwin32_gcc_objc___SUMMARY="${SUMMARY} (Objective-C++)"
-cygwin32_gcc_objc___REQUIRES="${NAME}-core ${NAME}-g++ ${NAME}-objc"
-cygwin32_gcc_objc___CONTENTS="
-	usr/lib/gcc/${TOOLCHAIN_TARGET}/${VERSION/-*/.*}/cc1objplus.exe
-"
-cygwin32_gcc_ada_SUMMARY="${SUMMARY} (Ada)"
-cygwin32_gcc_ada_REQUIRES="${NAME}-core"
-cygwin32_gcc_ada_CONTENTS="
-	usr/bin/${TOOLCHAIN_TARGET}-gnat*.exe
-	usr/lib/gcc/${TOOLCHAIN_TARGET}/${VERSION/-*/.*}/adainclude/
-	usr/lib/gcc/${TOOLCHAIN_TARGET}/${VERSION/-*/.*}/adalib/
-	usr/lib/gcc/${TOOLCHAIN_TARGET}/${VERSION/-*/.*}/gnat1.exe
-"
-cygwin32_gcc_cilkplus_SUMMARY="${SUMMARY} (Cilk Plus)"
-cygwin32_gcc_cilkplus_REQUIRES="${NAME}-core"
-cygwin32_gcc_cilkplus_CONTENTS="
-	usr/lib/gcc/${TOOLCHAIN_TARGET}/${VERSION/-*/.*}/include/cilk/
-	usr/lib/gcc/${TOOLCHAIN_TARGET}/${VERSION/-*/.*}/libcilkrts.*
-	${TOOLCHAIN_SYSROOT#/}/usr/bin/cygcilkrts-5.dll
 "
